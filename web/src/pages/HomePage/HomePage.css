@@ -1,0 +1,18 @@
+.HomePageLayout {
+  display: grid;
+  grid-template-columns: 1fr 6fr 2fr;
+  /* border: 1px solid black; */
+  height: 80vh;
+}
+
+.LeftPanel {
+  /* border: 1px solid red; */
+}
+
+.MainPanel {
+  /* border: 1px solid blue; */
+}
+
+.RightPanel {
+  /* border: 1px solid red; */
+}
