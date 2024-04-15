@@ -30,28 +30,8 @@ export const Failure = ({ error }) => (
 
 export const Success = ({ notes }) => {
   return (
-    <div className="CreaturesList">
-      <Accordion allowMultiple allowToggle>
-        {notes.map((item) => {
-          if (item.type === 'Creature') {
-            return (
-            <AccordionItem key={item.id}>
-              <h2>
-                <AccordionButton>
-                  <Box as='span'>
-                    {item.title}
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                {item.body}
-              </AccordionPanel>
-            </AccordionItem>
-            )
-          }
-        })}
-      </Accordion>
-    </div>
+  <div>
+
+  </div>
   )
 }

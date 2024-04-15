@@ -1,3 +1,4 @@
+import React, { useState, useCallback } from 'react'
 import {
   Accordion,
   AccordionItem,
@@ -7,7 +8,7 @@ import {
   Box,
 } from '@chakra-ui/react'
 
-const sidebarLayout = [
+const defaultSidebarLayout = [
   {
     name: 'Notes',
     nested: [
@@ -52,48 +53,85 @@ const sidebarLayout = [
   }
 ]
 
-const makeItems = rawItems => {
-  return rawItems.map(i => {
-    if (!Object.keys(i).includes('nested')) {
-      return (
-        <AccordionItem>
+const assignIds = rawItems => {
+  // taks an array of objects and assigns an incremental id to each object or nested object, starting at 0
+  // also assigns a level to each object, where the top level is 0 and each nested level increments by 1
+  let id = 0;
+  const assignIdsHelper = (rawItems, level=0) => {
+    return rawItems.map(i => {
+      i.id = id
+      id++;
+      i.level = level
+      if (Object.keys(i).includes('nested')) {
+        i.nested = assignIdsHelper(i.nested, level+1)
+      }
+      return i
+    })
+  }
+  return assignIdsHelper(rawItems)
+
+}
+
+
+
+const Sidebar = ({
+  width = '15em',
+}) => {
+  const [layout, setLayout] = useState(assignIds(defaultSidebarLayout));
+  const [selected, setSelected] = useState(null);
+
+
+
+  const makeItems = useCallback(rawItems => {
+    return rawItems.map(i => {
+      if (!Object.keys(i).includes('nested')) {
+        return (
+        <AccordionItem
+          style={{
+            width,
+            borderBottom: '0',
+            backgroundColor: selected === i.id ? 'lightblue' : 'white',
+            }}
+          onClick={() => setSelected(i.id)}
+        >
+            <h2>
+              <AccordionButton style={{width: '100%'}}>
+                <Box
+                  as='span'
+
+                >
+                  {i.name}
+                </Box>
+              </AccordionButton>
+            </h2>
+          </AccordionItem>
+        )
+      } else {
+        return (
+        <AccordionItem style={{width, borderBottom: '0'}}>
           <h2>
             <AccordionButton>
               <Box as='span'>
                 {i.name}
               </Box>
+              <AccordionIcon/>
             </AccordionButton>
           </h2>
+          <AccordionPanel pb={0}>
+            <Accordion allowMultiple>
+              {makeItems(i.nested)}
+            </Accordion>
+          </AccordionPanel>
         </AccordionItem>
-      )
-    } else {
-      return (
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box as='span'>
-              {i.name}
-            </Box>
-            <AccordionIcon/>
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={0}>
-          <Accordion allowMultiple>
-            {makeItems(i.nested)}
-          </Accordion>
-        </AccordionPanel>
-      </AccordionItem>
-      )
-    }
+        )
+      }
+    })
+  }, [selected])
 
 
-  })
-}
-
-const Sidebar = () => {
   return (
     <Accordion allowMultiple>
-      {makeItems(sidebarLayout)}
+      {makeItems(layout)}
     </Accordion>
   )
 }
