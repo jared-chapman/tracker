@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useContext } from 'react'
 import {
   Accordion,
   AccordionItem,
@@ -7,6 +7,9 @@ import {
   AccordionIcon,
   Box,
 } from '@chakra-ui/react'
+
+import { LayoutContext } from 'src/Context'
+
 
 const defaultSidebarLayout = [
   {
@@ -78,7 +81,7 @@ const Sidebar = ({
   width = '15em',
 }) => {
   const [layout, setLayout] = useState(assignIds(defaultSidebarLayout));
-  const [selected, setSelected] = useState(null);
+  const {selectedSidebarValue, setSelectedSidebarValue} = useContext(LayoutContext);
 
 
 
@@ -90,15 +93,14 @@ const Sidebar = ({
           style={{
             width,
             borderBottom: '0',
-            backgroundColor: selected === i.id ? 'lightblue' : 'white',
-            }}
-          onClick={() => setSelected(i.id)}
+            backgroundColor: selectedSidebarValue?.id === i.id ? 'lightblue' : 'white',
+          }}
+          onClick={() => setSelectedSidebarValue(i)}
         >
             <h2>
               <AccordionButton style={{width: '100%'}}>
                 <Box
                   as='span'
-
                 >
                   {i.name}
                 </Box>
@@ -108,7 +110,12 @@ const Sidebar = ({
         )
       } else {
         return (
-        <AccordionItem style={{width, borderBottom: '0'}}>
+        <AccordionItem
+          style={{
+            width,
+            borderBottom: '0'
+          }}
+          >
           <h2>
             <AccordionButton>
               <Box as='span'>
@@ -126,7 +133,7 @@ const Sidebar = ({
         )
       }
     })
-  }, [selected])
+  }, [selectedSidebarValue])
 
 
   return (

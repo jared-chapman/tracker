@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import {
   Accordion,
   AccordionItem,
@@ -6,6 +7,8 @@ import {
   AccordionIcon,
   Box,
 } from '@chakra-ui/react'
+
+import { LayoutContext } from 'src/Context'
 
 import './CreaturesCell.css'
 
@@ -29,9 +32,11 @@ export const Failure = ({ error }) => (
 )
 
 export const Success = ({ notes }) => {
+  const {selectedSidebarValue, setSelectedSidebarValue} = useContext(LayoutContext);
+
   return (
   <div>
-
+    {selectedSidebarValue?.name}
   </div>
   )
 }
