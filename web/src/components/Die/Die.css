@@ -1,0 +1,51 @@
+.Wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(var(--wrapper_size));
+  margin: 1em;
+}
+
+.die {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  user-select: none;
+
+  border: 1px solid black;
+  height: var(--size);
+  width: var(--size);
+  margin: 1em;
+}
+
+.cube {
+  color: red;
+}
+
+.control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  user-select: none;
+
+  margin: 1em;
+}
+
+.mod {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+  user-select: none;
+
+  margin: 1em;
+}
+
+.mod > * {
+  margin: 0 0.5em;
+}

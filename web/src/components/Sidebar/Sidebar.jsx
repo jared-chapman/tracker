@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useContext } from 'react'
+
 import {
   Accordion,
   AccordionItem,
@@ -10,24 +11,23 @@ import {
 
 import { LayoutContext } from 'src/Context'
 
-
 const defaultSidebarLayout = [
   {
     name: 'Notes',
     nested: [
       {
-        name: 'Creatures'
+        name: 'Creatures',
       },
       {
-        name: 'Players'
+        name: 'Players',
       },
       {
-        name: 'NPCs'
+        name: 'NPCs',
       },
       {
-        name: 'Misc.'
+        name: 'Misc.',
       },
-    ]
+    ],
   },
   {
     name: 'Encounters',
@@ -52,95 +52,82 @@ const defaultSidebarLayout = [
     name: 'Dice',
   },
   {
-    name: 'Rules'
-  }
+    name: 'Rules',
+  },
 ]
 
-const assignIds = rawItems => {
+const assignIds = (rawItems) => {
   // taks an array of objects and assigns an incremental id to each object or nested object, starting at 0
   // also assigns a level to each object, where the top level is 0 and each nested level increments by 1
-  let id = 0;
-  const assignIdsHelper = (rawItems, level=0) => {
-    return rawItems.map(i => {
+  let id = 0
+  const assignIdsHelper = (rawItems, level = 0) => {
+    return rawItems.map((i) => {
       i.id = id
-      id++;
+      id++
       i.level = level
       if (Object.keys(i).includes('nested')) {
-        i.nested = assignIdsHelper(i.nested, level+1)
+        i.nested = assignIdsHelper(i.nested, level + 1)
       }
       return i
     })
   }
   return assignIdsHelper(rawItems)
-
 }
 
+const Sidebar = ({ width = '15em' }) => {
+  const [layout, setLayout] = useState(assignIds(defaultSidebarLayout))
+  const { selectedSidebarValue, setSelectedSidebarValue } =
+    useContext(LayoutContext)
 
-
-const Sidebar = ({
-  width = '15em',
-}) => {
-  const [layout, setLayout] = useState(assignIds(defaultSidebarLayout));
-  const {selectedSidebarValue, setSelectedSidebarValue} = useContext(LayoutContext);
-
-
-
-  const makeItems = useCallback(rawItems => {
-    return rawItems.map(i => {
-      if (!Object.keys(i).includes('nested')) {
-        return (
-        <AccordionItem
-          style={{
-            width,
-            borderBottom: '0',
-            backgroundColor: selectedSidebarValue?.id === i.id ? 'lightblue' : 'white',
-          }}
-          onClick={() => setSelectedSidebarValue(i)}
-        >
-            <h2>
-              <AccordionButton style={{width: '100%'}}>
-                <Box
-                  as='span'
-                >
-                  {i.name}
-                </Box>
-              </AccordionButton>
-            </h2>
-          </AccordionItem>
-        )
-      } else {
-        return (
-        <AccordionItem
-          style={{
-            width,
-            borderBottom: '0'
-          }}
-          >
-          <h2>
-            <AccordionButton>
-              <Box as='span'>
-                {i.name}
-              </Box>
-              <AccordionIcon/>
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={0}>
-            <Accordion allowMultiple>
-              {makeItems(i.nested)}
-            </Accordion>
-          </AccordionPanel>
-        </AccordionItem>
-        )
-      }
-    })
-  }, [selectedSidebarValue])
-
-
-  return (
-    <Accordion allowMultiple>
-      {makeItems(layout)}
-    </Accordion>
+  const makeItems = useCallback(
+    (rawItems) => {
+      return rawItems.map((i) => {
+        if (!Object.keys(i).includes('nested')) {
+          return (
+            <AccordionItem
+              style={{
+                width,
+                borderBottom: '0',
+                backgroundColor:
+                  selectedSidebarValue?.id === i.id ? 'lightblue' : 'white',
+              }}
+              onClick={() => setSelectedSidebarValue(i)}
+              key={i.id}
+            >
+              <h2>
+                <AccordionButton style={{ width: '100%' }}>
+                  <Box as="span">{i.name}</Box>
+                </AccordionButton>
+              </h2>
+            </AccordionItem>
+          )
+        } else {
+          return (
+            <AccordionItem
+              style={{
+                width,
+                borderBottom: '0',
+              }}
+              key={i.id}
+            >
+              <h2>
+                <AccordionButton>
+                  <Box as="span">{i.name}</Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={0}>
+                <Accordion allowMultiple>{makeItems(i.nested)}</Accordion>
+              </AccordionPanel>
+            </AccordionItem>
+          )
+        }
+      })
+    },
+    [selectedSidebarValue]
   )
+
+  return <Accordion allowMultiple>{makeItems(layout)}</Accordion>
 }
 
 export default Sidebar
